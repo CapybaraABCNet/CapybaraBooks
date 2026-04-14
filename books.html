@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книги</title>
+    <style>
+      body {
+        background-color: white;
+        color: black;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
+        padding: 0;
+        margin: 0;
+      }
+      header {
+        background: linear-gradient(135deg, #18a7b5, #d4f7fa);
+        color: white;
+        padding: 20px;
+      }
+      button {
+    background-color: skyblue;
+    border: none;
+    height: 50px;
+    width: 100px;
+}
+img {
+    width: 250px;
+    border-radius: 15px;
+}
+a {
+    color: green;
+}
+footer {
+  background: linear-gradient(135deg, #00aeff, #00f2ff);
+
+    color: rgb(255, 255, 255);
+    padding: 20px;
+}
+
+.logo1 {
+    
+    display: flex;
+    text-align: center;
+}
+.img {
+    border-radius: 75%;
+    width: 150px;
+    margin-right: 20px;
+}
+.container {
+    min-height: 100%;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 20px auto; 
+        }
+        .text {
+            color: black;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: appear 2s forwards;
+            margin-bottom: 20px;
+        }
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo1">
+        <h1>CapybaraBooks</h1>
+      </div>
+    </header>
+    <div class="text">
+      <div class="container">
+        <h2>Введите тут названии книги</h2>
+        <em>И сайт покажет вам все книги с похожим названием!</em><br>
+        <input type="text" id="book" placeholder="Введите..."><br><br>
+        <button id="but">Проверить</button>
+        <ul id="books"></ul>
+        <p id="error"></p>                                   
+      </div>
+    </div>
+    <script>
+      console.log('Что тут ищем?🫡');
+      
+      const books = document.querySelector('#books');
+      const button = document.querySelector('#but');
+      const error = document.querySelector('#error');
+
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        books.innerHTML = '';
+         const book = document.querySelector('#book').value;
+         const Url = `https://www.googleapis.com/books/v1/volumes?q=${book}`;
+        
+        fetch(Url)
+          .then((response) => {
+            console.log('Ответ от сервера получен: ', response);
+            return response.json();
+          })
+          .then(data => {
+            const bookss = data.items;
+
+            if (bookss) {
+              bookss.forEach(boook => {
+                const title = boook.volumeInfo.title;
+                const authors = boook.volumeInfo.authors ? boook.volumeInfo.authors.join(', ') : 'Автор не указан';
+                const list = document.createElement('li');
+                list.textContent = `Название: "${title}", Автор(ы): ${authors}`;
+                books.appendChild(list);
+              });
+            }
+            else {
+              error.textContent = 'Книги не нашлись😔';
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка при получении данных: ', error);
+            error.textContent = 'Ошибка! Видимо что то пошло не так.';
+          });
+      }); 
+    </script>
+  </body>
+</html>
